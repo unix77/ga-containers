@@ -11,6 +11,11 @@ jobs:
   test:
     environment: testing
     runs-on: ubuntu-latest
+    # if you want to containerize the job, use the container keyword & section
+    container:
+      # we have to use a name that exists on Docker Hub public registry
+      image: node:18
+      # we can use more keywords to set other condfigurations such as env (needed for jsut the image), etc
     env:
       MONGODB_CONNECTION_PROTOCOL: mongodb+srv
       MONGODB_CLUSTER_ADDRESS: cluster0.ntrwp.mongodb.net
@@ -41,7 +46,7 @@ jobs:
       - name: Output information
         env:
           PORT: 3000
-        run: |        
+        run: |
           echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
           echo "MONGODB_USERNAME: $MONGODB_USERNAME"
           echo "${{ env.PORT }}"

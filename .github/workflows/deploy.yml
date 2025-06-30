@@ -17,11 +17,27 @@ jobs:
       image: node:18
       # we can use more keywords to set other condfigurations such as env (needed for jsut the image), etc
     env:
-      MONGODB_CONNECTION_PROTOCOL: mongodb+srv
-      MONGODB_CLUSTER_ADDRESS: cluster0.ntrwp.mongodb.net
-      MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
-      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+      MONGODB_CONNECTION_PROTOCOL: mongodb
+      # if we are running a container, then we can use the service name as the address (it must be the same name we are
+      # using in the services section below)
+      # when we run a container, github actions creates a whole network that allws us to communicate between the container and the services
+      MONGODB_CLUSTER_ADDRESS: mongodb
+      # they should match the ones used below, to initialize the testing db
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: example
       PORT: 8080
+    # services do note depend on container keyword ! You can use the services independantly
+    services:
+      mongodb:
+        # this is a must ! they run inside images (check docker iamges documentation)
+        image: mongo
+        # many images may require some env variables to work, check always docs !
+        # this one for example requires a username and password to be set in order to start working (to initialize the db)
+        # remember that here we are trying to configure a db only for testing stuff, so we should not think or overcomplicate things
+        # exposing this values is not a problem, since this is just for testing purposes
+        env:
+          MONG_INITDB_ROOT_USERNAME: root
+          MONG_INITDB_ROOT_PASSWORD: example
     steps:
       - name: Get Code
         uses: actions/checkout@v3
